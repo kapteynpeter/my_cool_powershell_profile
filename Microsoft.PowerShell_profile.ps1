@@ -96,8 +96,69 @@ function Get-ChildItemUnix {
     }
 }
 
+function get-greater ([string]$str1,[string] $str2){
+    if($str1.Length -gt $str2.Length){
+        return $str1, $str2, 1
+    } else {
+        return $str2, $str1, 2
+    }
+}
+
+function split_list ($list) {
+    $middle = $list.Count / 2
+    $middle_plus_one = $middle + 1
+    $end = $list.Count
+    $a = $list[1..$middle]
+    $b = $list[$middle_plus_one..$end]
+    $outlist = [System.Collections.ArrayList]@()
+    $outlist = $outlist + ""
+    $outlist = $outlist + ""
+    $outlist[0] = $a
+    $outlist[1] = $b
+    return $outlist
+}
+
+function equalify ($list){
+    $a = $list[0]
+    $b = $list[1]
+    for ($i = 0; $i -lt $a.Count; $i ++){
+        if ($a[$i].Length -gt $b[$i].Length)
+        {
+            $diff = $a[$i].Length - $b[$i].Length
+            if ($b[$i].Length -gt 0)
+            {
+                $b[$i] = $b[$i] + (" " * $diff)
+            } else {
+                $b = $b + (" " * $a[$i].Length)
+            }
+        } else {
+            $diff = $b[$i].Length - $a[$i].Length
+            $a[$i] = $a[$i] + (" " * $diff)
+        }
+    }
+    $list[0] = $a
+    $list[1] = $b
+    return $list
+}
+
+function lss {
+    $items = Get-ChildItem
+    [System.Collections.ArrayList]$items  = $items.name
+    $items = split_list($items)
+    
+    $items = equalify($items)
+    foreach ($item in $items){
+        $len = 0
+        foreach($it in $item){
+            $len = $len + $it.length
+            write-host "here"
+        }
+        $len
+    }
+
+}
+
 # function Get-ChildItemUnixFancy {
-#     $arrayPositions = @()
 #     $console_len = $Host.UI.RawUI.WindowSize.Width
 #     $items = Get-ChildItem
 #     $str_len = 0
@@ -106,26 +167,55 @@ function Get-ChildItemUnix {
 #     }
 #     $num_times_to_divide_by_two = [Math]::Ceiling($str_len/($console_len * 2))
 #     Write-Output $console_len
-#     Write-Output $str_len
-#     Write-Output $num_times_to_divide_by_two
+#     # Write-Output $str_len
+#     # Write-Output $num_times_to_divide_by_two
     
 #     $num_cols = $items.Length
-#     Write-Output $num_cols
+#     # Write-Output $num_cols
 #     for($i = 1; $i -le $num_times_to_divide_by_two; $i++){
 #         $num_cols = $num_cols / 2
 #     }
 #     $num_cols = [Math]::Ceiling($num_cols)
 
-#     Write-Output $num_cols
+#     # Write-Output $num_cols
 
 #     $idx = 0
 #     $col_index = 0
 #     $num_rows = $items.Length / $num_cols
+#     # Write-Output $items.Length
+#     # Write-Output $num_cols
+#     # Write-Output $num_rows
 #     $array =  New-Object system.Array[][] $num_rows, $num_cols
+#     # Write-Output $array
 #     for ($i = 0; $i -lt $items.Length; $i++){
+#         $my_str = "({0},{1})={2}" -f $col_index, $idx, $items[$i].Name
+#         # Write-Output $my_str
+#         $array[$col_index][$idx] = $items[$i].Name
+#         $idx = $idx + 1
+#         if ((($idx % $num_cols) -eq 0) -and ( $i -ne 0)) {
+#             $s = "{0} % {1} = {2}" -f $i, $num_cols, ($i%$num_cols)
+#             # Write-Output $s
+#             $col_index = $col_index + 1
+#             $idx = 0
+#         }
+#     }
 
+#     foreach($row in $array) {
+
+#         Write-Output $row
+#         Write-Output ""
+#         Write-Output ""
+#     }
+
+#     for($i = 0; $i -lt $array.Length; $i++){
+#         for($j = 0; $j -lt $array[0].Length; $j++){
+#             $str = $array[$i][$j] + "  "
+#             Write-Host $str -NoNewline
+#         }
+#         Write-Output ""
 #     }
 # }
+
 
 # 1 2 3 4 5 6 7 8
 # arr[0][0] = 1
