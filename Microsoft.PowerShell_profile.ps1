@@ -20,17 +20,17 @@ function Get-GitBranch { git branch }
 function Get-GitBranchAll { git branch -a }
 function Get-GitCommit { git commit -m $args }
 
-New-Alias -Name gst -Value Get-GitStatus -Force -Option AllScope
-New-Alias -Name gd -Value Get-Gitdiff
-New-Alias -Name gdc -Value Get-GitDiffCached
-New-Alias -Name gco -Value Get-GitCheckout
-New-Alias -Name gcob -Value Get-GitCheckoutBranch
-New-Alias -Name glg -Value Get-GitFancyLog
-New-Alias -Name ga -Value Get-GitAdd -Force -Option AllScope
-New-Alias -Name gb -Value Get-GitBranch
-New-Alias -Name gba -Value Get-GitBranchAll
-Remove-Item alias:gc -Force
-New-Alias -Name gc -Value Get-GitCommit
+# New-Alias -Name gst -Value Get-GitStatus -Force -Option AllScope
+# New-Alias -Name gd -Value Get-Gitdiff
+# New-Alias -Name gdc -Value Get-GitDiffCached
+# New-Alias -Name gco -Value Get-GitCheckout
+# New-Alias -Name gcob -Value Get-GitCheckoutBranch
+# New-Alias -Name glg -Value Get-GitFancyLog
+# New-Alias -Name ga -Value Get-GitAdd -Force -Option AllScope
+# New-Alias -Name gb -Value Get-GitBranch
+# New-Alias -Name gba -Value Get-GitBranchAll
+# Remove-Item alias:gc -Force
+# New-Alias -Name gc -Value Get-GitCommit
 
 # --------------------------------------------------------------------------- #
 # Navigation Aliases
@@ -42,11 +42,11 @@ function Set-Kirby { Set-Location c:/traeger/kirbyapp }
 
 function Set-Bootloader-Gooey { Set-Location c:/traeger/bootloader_gooey/bootloader }
 
-New-Alias -Name traeger -Value Set-Traeger
-New-Alias -Name story -Value Set-Storyboard
-New-Alias -Name gooey -Value Set-Gooey
-New-Alias -Name kirby -Value Set-Kirby
-New-Alias -Name boot -Value Set-Bootloader-Gooey
+# New-Alias -Name traeger -Value Set-Traeger
+# New-Alias -Name story -Value Set-Storyboard
+# New-Alias -Name gooey -Value Set-Gooey
+# New-Alias -Name kirby -Value Set-Kirby
+# New-Alias -Name boot -Value Set-Bootloader-Gooey
 
 # --------------------------------------------------------------------------- #
 # Random functions
@@ -108,8 +108,8 @@ function split_list ($list) {
     $middle = $list.Count / 2
     $middle_plus_one = $middle + 1
     $end = $list.Count
-    $a = $list[1..$middle]
-    $b = $list[$middle_plus_one..$end]
+    [System.Collections.ArrayList]$a = $list[1..$middle]
+    [System.Collections.ArrayList]$b = $list[$middle_plus_one..$end]
     $outlist = [System.Collections.ArrayList]@()
     $outlist = $outlist + ""
     $outlist = $outlist + ""
@@ -130,6 +130,8 @@ function equalify ($list){
                 $b[$i] = $b[$i] + (" " * $diff)
             } else {
                 $b = $b + (" " * $a[$i].Length)
+                $b = [System.Collections.ArrayList]$b
+                # $b.add(" " * $a[$i].Length)
             }
         } else {
             $diff = $b[$i].Length - $a[$i].Length
@@ -141,22 +143,57 @@ function equalify ($list){
     return $list
 }
 
+function len ($list){
+    $l = 0
+    foreach ($item in $list ) {
+        $l = $l + $item.Length
+    }
+    return $l
+}
+
 function lss {
     $items = Get-ChildItem
     [System.Collections.ArrayList]$items  = $items.name
-    $items = split_list($items)
-    
-    $items = equalify($items)
-    foreach ($item in $items){
-        $len = 0
-        foreach($it in $item){
-            $len = $len + $it.length
-            write-host "here"
+
+    $console_len = $Host.UI.RawUI.WindowSize.Width
+    $items_len = len($items)
+    if ($items_len -gt $console_len){
+        $items = split_list($items)
+        $items = equalify($items)
+        $l = len($items[0])
+        $while_loop_count = 0
+        while ( $l -gt $console_len ) {
+            write-host "while lop count {0}" -f $while_loop_count
+            $while_loop_count = $while_loop_count + 1
+            $items.Length
+            $temp = [System.Collections.ArrayList]@()
+            for ($i = 0; $i -lt $items.Count; $i++)
+            {
+                write-host "for lop count {0}" -f $i
+                $ol = split_list($items[$i])
+                $ol = equalify($ol)
+                $temp.add($ol[0])
+                $temp.add($ol[1])
+            }
+            $items = $temp
+            $l = len($items[0])
         }
-        $len
+        write-host "here"
+        foreach($list in $items){
+            foreach($item in $list){
+                Write-Host $item -NoNewline
+            }
+            Write-host ""
+        }
+    } else {
+        $items
     }
 
 }
+
+lss
+# Write-Host "asdf" -Noewline
+# Write-Host "asdf" -NoNewline
 
 # function Get-ChildItemUnixFancy {
 #     $console_len = $Host.UI.RawUI.WindowSize.Width
