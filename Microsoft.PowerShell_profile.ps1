@@ -20,17 +20,17 @@ function Get-GitBranch { git branch }
 function Get-GitBranchAll { git branch -a }
 function Get-GitCommit { git commit -m $args }
 
-# New-Alias -Name gst -Value Get-GitStatus -Force -Option AllScope
-# New-Alias -Name gd -Value Get-Gitdiff
-# New-Alias -Name gdc -Value Get-GitDiffCached
-# New-Alias -Name gco -Value Get-GitCheckout
-# New-Alias -Name gcob -Value Get-GitCheckoutBranch
-# New-Alias -Name glg -Value Get-GitFancyLog
-# New-Alias -Name ga -Value Get-GitAdd -Force -Option AllScope
-# New-Alias -Name gb -Value Get-GitBranch
-# New-Alias -Name gba -Value Get-GitBranchAll
-# Remove-Item alias:gc -Force
-# New-Alias -Name gc -Value Get-GitCommit
+New-Alias -Name gst -Value Get-GitStatus -Force -Option AllScope
+New-Alias -Name gd -Value Get-Gitdiff
+New-Alias -Name gdc -Value Get-GitDiffCached
+New-Alias -Name gco -Value Get-GitCheckout
+New-Alias -Name gcob -Value Get-GitCheckoutBranch
+New-Alias -Name glg -Value Get-GitFancyLog
+New-Alias -Name ga -Value Get-GitAdd -Force -Option AllScope
+New-Alias -Name gb -Value Get-GitBranch
+New-Alias -Name gba -Value Get-GitBranchAll
+Remove-Item alias:gc -Force
+New-Alias -Name gc -Value Get-GitCommit
 
 # --------------------------------------------------------------------------- #
 # Navigation Aliases
@@ -42,11 +42,11 @@ function Set-Kirby { Set-Location c:/traeger/kirbyapp }
 
 function Set-Bootloader-Gooey { Set-Location c:/traeger/bootloader_gooey/bootloader }
 
-# New-Alias -Name traeger -Value Set-Traeger
-# New-Alias -Name story -Value Set-Storyboard
-# New-Alias -Name gooey -Value Set-Gooey
-# New-Alias -Name kirby -Value Set-Kirby
-# New-Alias -Name boot -Value Set-Bootloader-Gooey
+New-Alias -Name traeger -Value Set-Traeger
+New-Alias -Name story -Value Set-Storyboard
+New-Alias -Name gooey -Value Set-Gooey
+New-Alias -Name kirby -Value Set-Kirby
+New-Alias -Name boot -Value Set-Bootloader-Gooey
 
 # --------------------------------------------------------------------------- #
 # Random functions
@@ -81,7 +81,7 @@ function ascii($chars, $hex) {
     }
 }
 
-function Get-ChildItemUnix {
+function Get-ChildItemUnixSimple {
     Write-Output $Host.UI.RawUI.WindowSize.Width
     $items = Get-ChildItem
     foreach ( $item in $items ) {
@@ -97,96 +97,59 @@ function Get-ChildItemUnix {
 }
 
 
-function split_list ($list) {
-    $middle = $list.Count / 2
-    $middle_plus_one = $middle + 1
-    $end = $list.Count
-    [System.Collections.ArrayList]$a = $list[1..$middle]
-    [System.Collections.ArrayList]$b = $list[$middle_plus_one..$end]
-    $outlist = [System.Collections.ArrayList]@()
-    $outlist = $outlist + ""
-    $outlist = $outlist + ""
-    $outlist[0] = $a
-    $outlist[1] = $b
-    return $outlist
-}
-
-function pad ($list){
-    for($i = 0; $i -lt $list.Count; $i++){
-        $list[$i] = $list[$i] + "  "
-    }
-    return $list
-}
-
-function equalify ($list){
-    $a = $list[0]
-    $b = $list[1]
-    for ($i = 0; $i -lt $a.Count; $i ++){
-        if ($a[$i].Length -gt $b[$i].Length)
-        {
-            $diff = $a[$i].Length - $b[$i].Length
-            if ($b[$i].Length -gt 0)
-            {
-                $b[$i] = $b[$i] + (" " * $diff)
-            } else {
-                $b = $b + (" " * $a[$i].Length)
-                $b = [System.Collections.ArrayList]$b
-            }
-        } else {
-            $diff = $b[$i].Length - $a[$i].Length
-            $a[$i] = $a[$i] + (" " * $diff)
-        }
-    }
-    $list[0] = $a
-    $list[1] = $b
-    return $list
-}
-
-function len ($list){
-    $l = 0
-    foreach ($item in $list ) {
-        $l = $l + $item.Length
-    }
-    return $l
-}
-
-function lss {
+function Get-ChildItemUnix {
     $items = Get-ChildItem
     [System.Collections.ArrayList]$items  = $items.name
+    $max_cols = $items.Count
+    $num_cols = 0
+    $num_rows = 0
 
-    $console_len = $Host.UI.RawUI.WindowSize.Width
-    $items_len = len($items)
-    if ($items_len -gt $console_len){
-        $items = split_list($items)
-        $items[0] = pad($items[0])
-        $items[1] = pad($items[1])
-        $items = equalify($items)
-        $l = len($items[0])
-        while ( $l -gt $console_len ) {
-            $temp = [System.Collections.ArrayList]@()
-            for ($i = 0; $i -lt $items.Count; $i++)
-            {
-                $ol = split_list($items[$i])
-                $ol = equalify($ol)
-                $temp.add($ol[0])
-                $temp.add($ol[1])
+    # try out all row/col configs to find the one that fits
+    # ie the config that maximizes cols
+    for ($i = $max_cols; $i -ge 1; $i--){
+        $num_cols = $i
+        $num_rows = [Math]::Ceiling($items.Count / $num_cols)
+        $c = 0
+        $array = New-Object 'string[,]' $num_rows, $num_cols
+        $col_widths = @(0) * $num_cols
+
+        # fit the directory items into the array with this row/col config
+        for ($row = 0; $row -lt $num_rows; $row++){
+            for ($col = 0; $col -lt $num_cols; $col++){
+                try {
+                    $array[$row, $col] = $items[$c] + "  "
+
+                    # keep track of the widths so you know the largest width in each colom
+                    if ($array[$row, $col].Length -gt $col_widths[$col]) {
+                        $col_widths[$col] = $array[$row, $col].Length
+                    }
+                } catch {}
+                $c = $c + 1
             }
-            $items = $temp
-            $l = len($items[0])
         }
-        write-host "here"
-        foreach($list in $items){
-            foreach($item in $list){
-                Write-Host $item -NoNewline
-            }
-            Write-host ""
+
+        # check if this row/col config will fit in the console horizontally
+        $console_len = $Host.UI.RawUI.WindowSize.Width
+        $total_row_len = 0
+        foreach($width in $col_widths) { $total_row_len = $total_row_len + $width }
+        if ($total_row_len -lt $console_len) {
+            break
         }
-    } else {
-        $items
     }
 
+    # print it to console
+    for($i = 0; $i -lt $num_rows; $i++){
+        for($j = 0; $j -lt $num_cols; $j++){
+            Write-Host $array[$i, $j] -NoNewline
+            $diff = $col_widths[$j] - $array[$i, $j].Length 
+            if($diff -gt 0) {
+                $diffstr = " " * $diff
+                Write-Host $diffstr -NoNewline
+            }
+        }
+        Write-host ""
+    }
 }
-
 
 Remove-Item alias:ls -Force
 New-Alias -Name ls -Value Get-ChildItemUnix
