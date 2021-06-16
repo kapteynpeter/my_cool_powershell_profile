@@ -122,12 +122,18 @@ function Get-ChildItemUnix ($args) {
             for ($row = 0; $row -lt $num_rows; $row++){
                 for ($col = 0; $col -lt $num_cols; $col++){
                     try {
-                        $array[$row, $col] = $items[$c] + "  "
-    
-                        # keep track of the widths so you know the largest width in each colom
-                        if ($array[$row, $col].Length -gt $col_widths[$col]) {
-                            $col_widths[$col] = $array[$row, $col].Length
+                        # don't display files with a leading "."
+                        if ($items[$c][0] -ne ".") {
+                            $array[$row, $col] = $items[$c] + "  "
+
+                            # keep track of the widths so you know the largest width in each colom
+                            if ($array[$row, $col].Length -gt $col_widths[$col]) {
+                                $col_widths[$col] = $array[$row, $col].Length
+                            }
+                        } else {
+                            $col--
                         }
+    
                     } catch {}
                     $c = $c + 1
                 }
@@ -159,6 +165,7 @@ function Get-ChildItemUnix ($args) {
 
 Remove-Item alias:ls -Force
 New-Alias -Name ls -Value Get-ChildItemUnix
+New-Alias -Name ll -Value Get-ChildItem
 
 # --------------------------------------------------------------------------- #
 # Assorted suffs
