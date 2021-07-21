@@ -1,0 +1,153 @@
+pi@raspberrypi:~/integration-testing $  python3 scripts/grilltest
+ Welcome to grilltest v2.0.0.
+Login to begin, or type `help` to see available commands.
+(grilltest)  login
+Password:
+Bad Access Token Response: {'code': 400, 'message': 'NotAuthorizedException: Incorrect username or password.'}
+Bad credentials. Please try again.
+(grilltest) login
+Password:
+Connection successful
+Connection successful
+(grilltest) run TestProbeAlarmUIKirby
+test_probe_alarm_ui_probe_1_C (integrationtests.itests.test_cook.TestProbeAlarmUIKirby)
+Test setting the probe alarm for probe 1 in C, via UI ... FAIL
+test_probe_alarm_ui_probe_1_F (integrationtests.itests.test_cook.TestProbeAlarmUIKirby)
+Test setting the probe alarm for probe 1 in F, via UI ... ok
+test_probe_alarm_ui_probe_2_C (integrationtests.itests.test_cook.TestProbeAlarmUIKirby)
+Test setting the probe alarm for probe 2 in C, via UI ...       FAIL
+test_probe_alarm_ui_probe_2_F (integrationtests.itests.test_cook.TestProbeAlarmUIKirby)
+Test setting the probe alarm for probe 2 in F, via UI ... FAIL
+
+======================================================================
+FAIL: test_probe_alarm_ui_probe_1_C (integrationtests.itests.test_cook.TestProbeAlarmUIKirby)
+Test setting the probe alarm for probe 1 in C, via UI
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/pi/integration-testing/integrationtests/framework/case.py", line 58, in require_state
+    data_keys=[const.STATUS_SYSTEM_STATUS_KEY])
+  File "/home/pi/integration-testing/integrationtests/framework/case.py", line 199, in try_repeatedly
+    raise last_exception
+  File "/home/pi/integration-testing/integrationtests/framework/case.py", line 186, in try_repeatedly
+    assertion(*assertion_args, **input_kwargs)
+  File "/usr/lib/python3.7/unittest/case.py", line 839, in assertEqual
+    assertion_func(first, second, msg=msg)
+  File "/usr/lib/python3.7/unittest/case.py", line 832, in _baseAssertEqual
+    raise self.failureException(msg)
+AssertionError: 6 != 2
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/pi/integration-testing/integrationtests/framework/skip.py", line 45, in new_setup
+    old_setup(test_self)
+  File "/home/pi/integration-testing/integrationtests/itests/test_cook.py", line 697, in setUp
+    super().setUp()
+  File "/home/pi/integration-testing/integrationtests/framework/case.py", line 39, in setUp
+    self.require_state(self.required_state)
+  File "/home/pi/integration-testing/integrationtests/framework/case.py", line 62, in require_state
+    self.set_state(state)
+  File "/home/pi/integration-testing/integrationtests/framework/case.py", line 80, in set_state
+    *state_functions[state])
+  File "/home/pi/integration-testing/integrationtests/pictrl.py", line 95, in do_action
+    function(*args, **kwargs)
+  File "/home/pi/integration-testing/integrationtests/framework/case.py", line 100, in set_manual_cook
+    pictrl.power_cycle_and_ignite()
+  File "/home/pi/integration-testing/integrationtests/pictrl.py", line 111, in power_cycle_and_ignite
+    power_cycle_grill()
+  File "/home/pi/integration-testing/integrationtests/pictrl.py", line 144, in power_cycle_grill
+    MQTT_GRILL.wait_for_connection()
+  File "/home/pi/integration-testing/integrationtests/grill/mqtt_grill.py", line 254, in wait_for_connection
+    raise AssertionError('wait_for_connection: operation timed out')
+AssertionError: wait_for_connection: operation timed out
+
+======================================================================
+FAIL: test_probe_alarm_ui_probe_2_C (integrationtests.itests.test_cook.TestProbeAlarmUIKirby)
+Test setting the probe alarm for probe 2 in C, via UI
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/pi/integration-testing/integrationtests/framework/case.py", line 58, in require_state
+    data_keys=[const.STATUS_SYSTEM_STATUS_KEY])
+  File "/home/pi/integration-testing/integrationtests/framework/case.py", line 199, in try_repeatedly
+    raise last_exception
+  File "/home/pi/integration-testing/integrationtests/framework/case.py", line 186, in try_repeatedly
+    assertion(*assertion_args, **input_kwargs)
+  File "/usr/lib/python3.7/unittest/case.py", line 839, in assertEqual
+    assertion_func(first, second, msg=msg)
+  File "/usr/lib/python3.7/unittest/case.py", line 832, in _baseAssertEqual
+    raise self.failureException(msg)
+AssertionError: 6 != 10
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/pi/integration-testing/integrationtests/framework/skip.py", line 45, in new_setup
+    old_setup(test_self)
+  File "/home/pi/integration-testing/integrationtests/itests/test_cook.py", line 697, in setUp
+    super().setUp()
+  File "/home/pi/integration-testing/integrationtests/framework/case.py", line 39, in setUp
+    self.require_state(self.required_state)
+  File "/home/pi/integration-testing/integrationtests/framework/case.py", line 62, in require_state
+    self.set_state(state)
+  File "/home/pi/integration-testing/integrationtests/framework/case.py", line 80, in set_state
+    *state_functions[state])
+  File "/home/pi/integration-testing/integrationtests/pictrl.py", line 95, in do_action
+    function(*args, **kwargs)
+  File "/home/pi/integration-testing/integrationtests/framework/case.py", line 100, in set_manual_cook
+    pictrl.power_cycle_and_ignite()
+  File "/home/pi/integration-testing/integrationtests/pictrl.py", line 111, in power_cycle_and_ignite
+    power_cycle_grill()
+  File "/home/pi/integration-testing/integrationtests/pictrl.py", line 144, in power_cycle_grill
+    MQTT_GRILL.wait_for_connection()
+  File "/home/pi/integration-testing/integrationtests/grill/mqtt_grill.py", line 254, in wait_for_connection
+    raise AssertionError('wait_for_connection: operation timed out')
+AssertionError: wait_for_connection: operation timed out
+
+======================================================================
+FAIL: test_probe_alarm_ui_probe_2_F (integrationtests.itests.test_cook.TestProbeAlarmUIKirby)
+Test setting the probe alarm for probe 2 in F, via UI
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/pi/integration-testing/integrationtests/framework/case.py", line 58, in require_state
+    data_keys=[const.STATUS_SYSTEM_STATUS_KEY])
+  File "/home/pi/integration-testing/integrationtests/framework/case.py", line 199, in try_repeatedly
+    raise last_exception
+  File "/home/pi/integration-testing/integrationtests/framework/case.py", line 186, in try_repeatedly
+    assertion(*assertion_args, **input_kwargs)
+  File "/usr/lib/python3.7/unittest/case.py", line 839, in assertEqual
+    assertion_func(first, second, msg=msg)
+  File "/usr/lib/python3.7/unittest/case.py", line 832, in _baseAssertEqual
+    raise self.failureException(msg)
+AssertionError: 6 != 3
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/pi/integration-testing/integrationtests/framework/skip.py", line 45, in new_setup
+    old_setup(test_self)
+  File "/home/pi/integration-testing/integrationtests/itests/test_cook.py", line 697, in setUp
+    super().setUp()
+  File "/home/pi/integration-testing/integrationtests/framework/case.py", line 39, in setUp
+    self.require_state(self.required_state)
+  File "/home/pi/integration-testing/integrationtests/framework/case.py", line 62, in require_state
+    self.set_state(state)
+  File "/home/pi/integration-testing/integrationtests/framework/case.py", line 80, in set_state
+    *state_functions[state])
+  File "/home/pi/integration-testing/integrationtests/pictrl.py", line 95, in do_action
+    function(*args, **kwargs)
+  File "/home/pi/integration-testing/integrationtests/framework/case.py", line 100, in set_manual_cook
+    pictrl.power_cycle_and_ignite()
+  File "/home/pi/integration-testing/integrationtests/pictrl.py", line 111, in power_cycle_and_ignite
+    power_cycle_grill()
+  File "/home/pi/integration-testing/integrationtests/pictrl.py", line 144, in power_cycle_grill
+    MQTT_GRILL.wait_for_connection()
+  File "/home/pi/integration-testing/integrationtests/grill/mqtt_grill.py", line 254, in wait_for_connection
+    raise AssertionError('wait_for_connection: operation timed out')
+AssertionError: wait_for_connection: operation timed out
+
+----------------------------------------------------------------------
+Ran 4 tests in 737.613s
+
+FAILED (failures=3)
+Run Time: 0:12:18.091657
+(grilltest)
