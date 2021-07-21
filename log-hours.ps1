@@ -2,29 +2,30 @@ function Get-HoursWorked {
     param(
       [parameter(Mandatory=$true,
       ParameterSetName="clockIn")]
-      [bool]
+      [switch]
       $clockIn,
   
       [parameter(Mandatory=$true,
       ParameterSetName="clockOut")]
-      [bool]
+      [switch]
       $clockOut,
 
       [parameter(Mandatory=$true,
       ParameterSetName="startLunch")]
-      [bool]
+      [switch]
       $startLunch,
 
       [parameter(Mandatory=$true,
       ParameterSetName="endLunch")]
-      [bool]
+      [switch]
       $endLunch
       )
 
       $outfile = $profile_path + "/hours.csv"
-      $newcsv = {} | Select "date","timein","timeout", "lunchtimein", "lunchtimeout" | Export-Csv $outfile
-      Import-Csv $outfile
 
+      if (-Not (test-path $outfile)) {
+        {} | Select "date","timein","timeout", "lunchtimein", "lunchtimeout" | Export-Csv $outfile
+      }
 
 }
 
@@ -45,6 +46,6 @@ function Get-HoursWorked {
 # "You worked {0} today" -f $hoursWorked
 
 
-usage 
-log-hours < -clockin | -clockout | -clockinlunch | -clockoutlunch >
-log-hours -gethours < today | <string containing date> >
+# usage 
+# log-hours < -clockin | -clockout | -clockinlunch | -clockoutlunch >
+# log-hours -gethours < today | <string containing date> >
