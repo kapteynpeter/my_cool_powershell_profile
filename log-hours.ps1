@@ -1,51 +1,57 @@
 function Get-HoursWorked {
     param(
-      [parameter(Mandatory=$true,
-      ParameterSetName="clockIn")]
-      [switch]
-      $clockIn,
-  
-      [parameter(Mandatory=$true,
-      ParameterSetName="clockOut")]
-      [switch]
-      $clockOut,
-
-      [parameter(Mandatory=$true,
-      ParameterSetName="startLunch")]
-      [switch]
-      $startLunch,
-
-      [parameter(Mandatory=$true,
-      ParameterSetName="endLunch")]
-      [switch]
-      $endLunch
+      [parameter(Mandatory=$true, ParameterSetName="clockIn")]    [switch]$ClockIn,
+      [parameter(Mandatory=$true, ParameterSetName="clockOut")]   [switch]$ClockOut,
+      [parameter(Mandatory=$true, ParameterSetName="startLunch")] [switch]$StartLunch,
+      [parameter(Mandatory=$true, ParameterSetName="endLunch")]   [switch]$EndLunch,
+      [parameter(Mandatory=$true, ParameterSetName="endLunch")]   [switch]$GetHoursWorked
       )
 
-      $outfile = $profile_path + "/hours.csv"
-
+      $outfile = "C:\Users\peterkapteyn\Documents\WindowsPowershell\hours.csv"
+      $date = get-date -UFormat "%m/%d/%Y"
+      $time = get-date -UFormat "%R"
+      
       if (-Not (test-path $outfile)) {
         {} | Select "date","timein","timeout", "lunchtimein", "lunchtimeout" | Export-Csv $outfile
       }
 
+      
+      $csv = get-content $outfile | ConvertFrom-Csv -delimiter ','
+      # $csv = Import-Csv $outfile
+      $row = $csv | Where-Object date -eq $date
+      "row"
+      $row
+      
+      if ($ClockIn) {
+        if ($row) {
+          "it already exsists my guy"
+          $row.timein = $time
+        } else {
+          "{0},{1},,," -f $date, $time | add-content -path $outfile
+        }
+      } elseif ($ClockOut) {
+
+      } elseif ($StartLunch) {
+
+      } elseif ($EndLunch) {
+
+      } elseif ($GetHoursWorked) {
+
+      }
+
+      $csv | Export-Csv $outfile
+
+      # $csvfile.date = "tomorrow"
+      # $csvfile | Export-Csv $outfile
+
+
 }
 
-# add a clock in clock out feature
-# add a log feature in case you forgot to clock in or out
-# make it compatible with the sweetness
-
-# param(
-#   # [single] $timeIn,
-#   # [single] $timeOut,
-#   # [single] $timeLunch,
-#   # [Parameter(Mandatory=$true)][bool]$username
-# )
-# $timeOut
-# $timeIn
-# $timeLunch
-# $hoursWorked = $timeOut - $timeIn - $timeLunch
-# "You worked {0} today" -f $hoursWorked
-
-
+# $file = get-content hours.csv | ConvertFrom-Csv -delimiter ','
+# $file | where-object date -eq '07/22/2021'
 # usage 
 # log-hours < -clockin | -clockout | -clockinlunch | -clockoutlunch >
 # log-hours -gethours < today | <string containing date> >
+
+
+get-hoursworked -clockin
