@@ -1,4 +1,4 @@
-function Get-HoursWorked {
+function log-hours {
     param(
       [parameter(Mandatory=$true, ParameterSetName="clockIn")]    [switch]$ClockIn,
       [parameter(Mandatory=$true, ParameterSetName="clockOut")]   [switch]$ClockOut,
@@ -19,24 +19,40 @@ function Get-HoursWorked {
       $csv = get-content $outfile | ConvertFrom-Csv -delimiter ','
       # $csv = Import-Csv $outfile
       $row = $csv | Where-Object date -eq $date
-      "row"
+      # "row"
       $row
       
       if ($ClockIn) {
         if ($row) {
-          "it already exsists my guy"
           $row.timein = $time
         } else {
           "{0},{1},,," -f $date, $time | add-content -path $outfile
+          return
         }
       } elseif ($ClockOut) {
-
+        if ($row) {
+          $row.timeout = $time
+        } else {
+          "{0},,{1},," -f $date, $time | add-content -path $outfile
+          return
+        }
+        
       } elseif ($StartLunch) {
-
+        if ($row) {
+          $row.lunchtimein = $time
+        } else {
+          "{0},,,{1}," -f $date, $time | add-content -path $outfile
+          return
+        }
       } elseif ($EndLunch) {
-
+        if ($row) {
+          $row.lunchtimeout = $time
+        } else {
+          "{0},,,,{1}" -f $date, $time | add-content -path $outfile
+          return
+        }
       } elseif ($GetHoursWorked) {
-
+        $timein
       }
 
       $csv | Export-Csv $outfile
@@ -54,4 +70,4 @@ function Get-HoursWorked {
 # log-hours -gethours < today | <string containing date> >
 
 
-get-hoursworked -clockin
+log-hours -clockin

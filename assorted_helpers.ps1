@@ -33,3 +33,7 @@ function ascii($chars, $hex) {
 }
 
 function c { code . }
+
+function speed-test { . "C:\asst\wpm\wpm.ps1"}
+
+function source-iogencmds { ". 'C:\Program Files\Crank_Software\Storyboard_Engine\6.2.202003130919.36509v\win32-x86-opengles_2.0-obj\bin\cmds.ps1'" }
